@@ -49,6 +49,7 @@ async def run_adk_workflow(initial_query: str) -> Dict[str, Any]:
     print("[ADK Workflow] Runner set up.")
 
     # Create session
+   # Create session
     print("[ADK Workflow] Creating new session...")
     session_id = str(uuid.uuid4())
     user_id = "user123"
@@ -56,11 +57,18 @@ async def run_adk_workflow(initial_query: str) -> Dict[str, Any]:
     await session_svc.create_session(
         session_id=session_id,
         app_name="ResearchSummarizeApp",
-        user_id=user_id,
-        # You can optionally set initial state here if needed
-        # initial_state={'initial_query': initial_query} # Ensure this is removed or commented out
+        user_id=user_id
     )
     print(f"[ADK Workflow] Session created with ID: {session_id} for user {user_id}.")
+
+    # ✅ Manually initialize session state if needed
+    session = await session_svc.get_session(
+        app_name="ResearchSummarizeApp",
+        user_id=user_id,
+        session_id=session_id
+    )
+    session.state["initial_query"] = initial_query
+
 
     # Initial user message
     initial_message = genai_types.Content(parts=[genai_types.Part(text=initial_query)])
